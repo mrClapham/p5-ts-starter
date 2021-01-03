@@ -1,6 +1,6 @@
 import * as p5 from "p5";
 export interface IAttractorPerlin {
-  p5Sketch: p5;
+  p5Sketch: (s: p5) => void;
   setColor(color: number[]): void;
 }
 
@@ -22,8 +22,12 @@ export default (overrides = {}): IAttractorPerlin => {
       for (let i = 0; i < gridY; i++) {
         const _grid = [];
         for (let ii = 0; ii < gridX; ii++) {
-          const vec = p5.Vector.random2D().mult(10);
+          //const noiseVal = s.map(s.noise(10), 10, 30);
+          const noiseVal = s.map(s.noise(i + ii), 0, 1, 0, 360);
+          const angle = s.radians(noiseVal);
+          const vec = p5.Vector.fromAngle(angle, 10);
           _grid.push({
+            noiseVal,
             vec,
             x: gridXsize / 2 + gridXsize * ii,
             y: gridYsize / 2 + gridYsize * i,
@@ -31,6 +35,7 @@ export default (overrides = {}): IAttractorPerlin => {
         }
         gridPositions.push(_grid);
       }
+      //s.createCanvas(width, height, s.WEBGL);
       s.createCanvas(width, height);
     };
 
@@ -42,7 +47,7 @@ export default (overrides = {}): IAttractorPerlin => {
           s.fill(color, i * ii * 20);
           s.translate(ee.x, ee.y);
           s.line(0, 0, ee.vec.x, ee.vec.y);
-          s.circle(0, 0, 6);
+          s.circle(0, 0, 5);
           s.pop();
         });
       });
